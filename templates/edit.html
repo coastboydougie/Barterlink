@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Listing{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <h1>Edit Listing</h1>
+
+    <form method="post" enctype="multipart/form-data" class="edit-form">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required maxlength="100"
+                   value="{{ listing.title }}">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="6" required>{{ listing.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="electronics" {% if listing.category == 'electronics' %}selected{% endif %}>Electronics</option>
+                <option value="clothing" {% if listing.category == 'clothing' %}selected{% endif %}>Clothing</option>
+                <option value="home" {% if listing.category == 'home' %}selected{% endif %}>Home & Garden</option>
+                <option value="sports" {% if listing.category == 'sports' %}selected{% endif %}>Sports & Outdoors</option>
+                <option value="books" {% if listing.category == 'books' %}selected{% endif %}>Books & Media</option>
+                <option value="other" {% if listing.category == 'other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Update Photo (optional)</label>
+            {% if listing.image %}
+                <p class="current-image">Current: <img src="{{ url_for('static', filename='uploads/' + listing.image) }}" alt="Current photo" class="thumb"></p>
+            {% endif %}
+            <input type="file" id="image" name="image" accept="image/*">
+        </div>
+
+        <div class="form-group">
+            <label for="looking_for">What are you looking for?</label>
+            <input type="text" id="looking_for" name="looking_for"
+                   value="{{ listing.looking_for or '' }}">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{{ url_for('listing', listing_id=listing.id) }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
