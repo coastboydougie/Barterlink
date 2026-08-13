@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h1>Create Account</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" class="auth-form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required maxlength="30" autofocus>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="6">
+        </div>
+
+        <div class="form-group">
+            <label for="confirm">Confirm Password</label>
+            <input type="password" id="confirm" name="confirm" required minlength="6">
+        </div>
+
+        <div class="form-group">
+            <label for="bio">Bio (optional)</label>
+            <textarea id="bio" name="bio" rows="3" maxlength="300"
+                      placeholder="A short intro about yourself..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+
+    <p class="auth-switch">
+        Already have an account? <a href="{{ url_for('login') }}">Log In</a>
+    </p>
+</div>
+{% endblock %}
