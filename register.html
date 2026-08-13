@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Sign up{% endblock %}
+
+{% block content %}
+<div class="container page narrow">
+    <h1>Create an account</h1>
+    <p class="page-intro">Join BarterLink and start trading skills for stuff.</p>
+
+    <form method="post" class="form">
+        <div class="form-group">
+            <label for="username">Username *</label>
+            <input type="text" name="username" id="username" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" name="email" id="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password *</label>
+            <input type="password" name="password" id="password" required minlength="6">
+        </div>
+        <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" name="location" id="location" placeholder="City, State">
+        </div>
+        <div class="form-group">
+            <label for="bio">Short bio</label>
+            <textarea name="bio" id="bio" rows="3" placeholder="What you’re good at or usually need…"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+    </form>
+
+    <p class="form-footer">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+</div>
+{% endblock %}

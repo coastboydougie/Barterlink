@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+
+{% block content %}
+<div class="container page narrow">
+    <h1>Log in</h1>
+    <p class="page-intro">Welcome back to BarterLink.</p>
+
+    <form method="post" class="form">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username" required autofocus>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+    </form>
+
+    <p class="form-footer">Don’t have an account? <a href="{{ url_for('register') }}">Sign up</a></p>
+
+    <div class="demo-box">
+        <p><strong>Demo accounts</strong> (password for all: <code>password123</code>)</p>
+        <ul>
+            <li>maria_g</li>
+            <li>james_r</li>
+            <li>sofia_t</li>
+            <li>alex_k</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
