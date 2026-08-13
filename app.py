@@ -31,7 +31,6 @@ def close_connection(exception):
 
 
 def init_db():
-    # Use a direct connection so it works at startup
     conn = sqlite3.connect(DATABASE)
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS users (
@@ -140,29 +139,7 @@ def logout():
 @app.route("/")
 @app.route("/browse")
 def browse():
-    db = get_db()
-    q = request.args.get("q", "").strip()
-    category = request.args.get("category", "").strip()
-
-    query = """
-        SELECT listings.*, users.username
-        FROM listings
-        JOIN users ON listings.user_id = users.id
-        WHERE 1=1
-    """
-    params = []
-
-    if q:
-        query += " AND (listings.title LIKE ? OR listings.description LIKE ?)"
-        params.extend([f"%{q}%", f"%{q}%"])
-    if category:
-        query += " AND listings.category = ?"
-        params.append(category)
-
-    query += " ORDER BY listings.created_at DESC"
-
-    listings = db.execute(query, params).fetchall()
-    return render_template("browse.html", listings=listings, q=q, category=category)
+    return "<h1>BarterLink is working!</h1><p>If you see this message, the server is running correctly.</p>"
 
 
 @app.route("/listing/<int:listing_id>")
