@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Create Listing{% endblock %}
+
+{% block content %}
+<div class="create-container">
+    <h1>Create a New Listing</h1>
+
+    <form method="post" enctype="multipart/form-data" class="create-form">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" required maxlength="100"
+                   placeholder="What are you offering?">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="6" required
+                      placeholder="Describe the item, condition, what you're looking for in return..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="">Select a category</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="home">Home & Garden</option>
+                <option value="sports">Sports & Outdoors</option>
+                <option value="books">Books & Media</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Photo (optional)</label>
+            <input type="file" id="image" name="image" accept="image/*">
+        </div>
+
+        <div class="form-group">
+            <label for="looking_for">What are you looking for?</label>
+            <input type="text" id="looking_for" name="looking_for"
+                   placeholder="e.g. cash, another item, open to offers">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Listing</button>
+        <a href="{{ url_for('browse') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
