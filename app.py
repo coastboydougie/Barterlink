@@ -31,31 +31,30 @@ def close_connection(exception):
 
 
 def init_db():
-    with app.app_context():
-        db = get_db()
-        db.executescript("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                bio TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
+    db = get_db()
+    db.executescript("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            bio TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
 
-            CREATE TABLE IF NOT EXISTS listings (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                title TEXT NOT NULL,
-                description TEXT NOT NULL,
-                category TEXT NOT NULL,
-                looking_for TEXT,
-                image TEXT,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users (id)
-            );
-        """)
-        db.commit()
+        CREATE TABLE IF NOT EXISTS listings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            category TEXT NOT NULL,
+            looking_for TEXT,
+            image TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        );
+    """)
+    db.commit()
 
 
 @app.before_request
@@ -276,9 +275,12 @@ def profile(username):
     return render_template("profile.html", user=user, listings=listings)
 
 
-# ---------- Run ----------
-
-if __name__ == "__main__":
+# ---------- Initialize DB on startup ----------
+with app.app_context():
     init_db()
+
+
+# ---------- Run ----------
+if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
