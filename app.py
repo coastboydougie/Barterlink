@@ -64,8 +64,11 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        db = get_db()
-        g.user = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        try:
+            db = get_db()
+            g.user = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        except:
+            g.user = None
 
 
 # ---------- Auth ----------
@@ -76,21 +79,23 @@ def register():
         return redirect(url_for("browse"))
 
     if request.method == "POST":
-        username = request.form["username"].strip()
-        email = request.form["email"].strip()
-        password = request.form["password"]
-        confirm = request.form["confirm"]
+        username = request.form.get("username", "").strip()
+        email = request.form.get("email", "").strip()
+        password = request.form.get("password", "")
+        confirm = request.form.get("confirm", "")
         bio = request.form.get("bio", "").strip()
 
+        error = None
+
         if not username or not email or not password:
-            flash("All fields are required.", "error")
+            error = "All fields are required."
         elif password != confirm:
-            flash("Passwords do not match.", "error")
+            error = "Passwords do not match."
         elif len(password) < 6:
-            flash("Password must be at least 6 characters.", "error")
+            error = "Password must be at least 6 characters."
         else:
-            db = get_db()
             try:
+                db = get_db()
                 db.execute(
                     "INSERT INTO users (username, email, password, bio) VALUES (?, ?, ?, ?)",
                     (username, email, generate_password_hash(password), bio),
@@ -99,7 +104,12 @@ def register():
                 flash("Account created! Please log in.", "success")
                 return redirect(url_for("login"))
             except sqlite3.IntegrityError:
-                flash("Username or email already taken.", "error")
+                error = "Username or email already taken."
+            except Exception as e:
+                error = f"Database error: {str(e)}"
+
+        if error:
+            flash(error, "error")
 
     return render_template("register.html")
 
@@ -110,8 +120,8 @@ def login():
         return redirect(url_for("browse"))
 
     if request.method == "POST":
-        username = request.form["username"].strip()
-        password = request.form["password"]
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
 
         db = get_db()
         user = db.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
@@ -188,9 +198,9 @@ def create():
         return redirect(url_for("login"))
 
     if request.method == "POST":
-        title = request.form["title"].strip()
-        description = request.form["description"].strip()
-        category = request.form["category"]
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        category = request.form.get("category", "")
         looking_for = request.form.get("looking_for", "").strip()
 
         if not title or not description or not category:
@@ -232,9 +242,9 @@ def edit(listing_id):
         return redirect(url_for("browse"))
 
     if request.method == "POST":
-        title = request.form["title"].strip()
-        description = request.form["description"].strip()
-        category = request.form["category"]
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        category = request.form.get("category", "")
         looking_for = request.form.get("looking_for", "").strip()
 
         image_filename = listing["image"]
