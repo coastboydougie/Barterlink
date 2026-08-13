@@ -201,7 +201,6 @@ def create():
                 file = request.files["image"]
                 if file and file.filename:
                     filename = secure_filename(file.filename)
-                    # Make filename unique
                     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
                     image_filename = f"{timestamp}_{filename}"
                     file.save(os.path.join(app.config["UPLOAD_FOLDER"], image_filename))
@@ -278,8 +277,8 @@ def profile(username):
 
 
 # ---------- Run ----------
-__name__ == "__main__":
-init_db()
-port = int(os.environ.get("port", 5000))
-app.run(host="0.0.0.0", port=port)
 
+if __name__ == "__main__":
+    init_db()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
