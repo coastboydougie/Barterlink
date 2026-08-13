@@ -1,41 +1,20 @@
 {% extends "base.html" %}
+
 {% block title %}{{ listing.title }}{% endblock %}
 
 {% block content %}
-<div class="container page">
-    <a href="{{ url_for('browse') }}" class="back-link">← Back to listings</a>
+<article class="listing-detail">
+    {% if listing.image %}
+        <img src="{{ url_for('static', filename='uploads/' + listing.image) }}" alt="{{ listing.title }}">
+    {% endif %}
 
-    <article class="listing-detail">
-        <div class="listing-type-badge {{ listing.listing_type }} large">
-            {% if listing.listing_type == 'service_for_goods' %}
-                Service → Goods
-            {% else %}
-                Goods → Service
-            {% endif %}
-        </div>
-
+    <div class="listing-body">
         <h1>{{ listing.title }}</h1>
-        <p class="listing-meta">
-            Posted by <strong>{{ listing.username }}</strong>
-            {% if listing.user_location %} · {{ listing.user_location }}{% endif %}
-            {% if listing.category %} · {{ listing.category }}{% endif %}
-        </p>
+        <p class="category">{{ listing.category }}</p>
+        <p class="looking-for"><strong>Looking for:</strong> {{ listing.looking_for or 'Open to offers' }}</p>
 
-        <div class="detail-grid">
-            <div class="detail-box offer">
-                <h3>What they offer</h3>
-                <p>{{ listing.what_i_offer }}</p>
-            </div>
-            <div class="detail-box want">
-                <h3>What they want</h3>
-                <p>{{ listing.what_i_want }}</p>
-            </div>
-        </div>
-
-        <div class="description">
-            <h3>Description</h3>
-            <p>{{ listing.description }}</p>
-        </div>
+        <h3>Description</h3>
+        <p>{{ listing.description }}</p>
 
         {% if listing.bio %}
         <div class="owner-bio">
@@ -44,11 +23,11 @@
         </div>
         {% endif %}
 
-        {% if g.user and g.user.id != listing.owner_id %}
+        {% if g.user and g.user.id != listing.user_id %}
         <div class="propose-box">
             <h3>Propose a trade</h3>
-            <form method="post" action="{{ url_for('propose_trade', listing_id=listing.id) }}">
-                <textarea name="message" rows="4" placeholder="Hi! I’d like to trade… Tell them what you can offer and any details." required></textarea>
+            <form method="post" action="#">
+                <textarea name="message" rows="4" placeholder="Write your trade proposal..."></textarea>
                 <button type="submit" class="btn btn-primary">Send Proposal</button>
             </form>
         </div>
@@ -57,6 +36,6 @@
             <p><a href="{{ url_for('login') }}">Log in</a> to propose a trade.</p>
         </div>
         {% endif %}
-    </article>
-</div>
+    </div>
+</article>
 {% endblock %}
