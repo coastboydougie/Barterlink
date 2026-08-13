@@ -8,7 +8,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "change-this-to-a-real-secret-key-later"
 app.config["UPLOAD_FOLDER"] = "static/uploads"
-app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5 MB max upload
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
@@ -31,8 +31,9 @@ def close_connection(exception):
 
 
 def init_db():
-    db = get_db()
-    db.executescript("""
+    # Use a direct connection so it works at startup
+    conn = sqlite3.connect(DATABASE)
+    conn.executescript("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
@@ -54,7 +55,8 @@ def init_db():
             FOREIGN KEY (user_id) REFERENCES users (id)
         );
     """)
-    db.commit()
+    conn.commit()
+    conn.close()
 
 
 @app.before_request
@@ -275,12 +277,10 @@ def profile(username):
     return render_template("profile.html", user=user, listings=listings)
 
 
-# ---------- Initialize DB on startup ----------
-with app.app_context():
-    init_db()
+# Create the tables when the app starts
+init_db()
 
 
-# ---------- Run ----------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
