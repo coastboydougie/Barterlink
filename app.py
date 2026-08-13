@@ -12,7 +12,7 @@ app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
-DATABASE = "barterlink.db"
+DATABASE = "barterlink_v2.db"   # <-- new clean database
 
 
 def get_db():
