@@ -1,48 +1,56 @@
 {% extends "base.html" %}
+
 {% block title %}Browse Listings{% endblock %}
 
 {% block content %}
-<div class="container page">
+<div class="browse-header">
     <h1>Browse Listings</h1>
 
-    <form class="filters" method="get" action="{{ url_for('browse') }}">
-        <div class="filter-row">
-            <input type="text" name="q" value="{{ q or '' }}" placeholder="Search keywords…" class="search-input">
-            <select name="type">
-                <option value="">All types</option>
-                <option value="service_for_goods" {% if current_type == 'service_for_goods' %}selected{% endif %}>Service → Goods</option>
-                <option value="goods_for_service" {% if current_type == 'goods_for_service' %}selected{% endif %}>Goods → Service</option>
-            </select>
-            <select name="category">
-                <option value="">All categories</option>
-                {% for cat in categories %}
-                <option value="{{ cat.category }}" {% if current_category == cat.category %}selected{% endif %}>{{ cat.category }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-primary">Filter</button>
-        </div>
-    </form>
+    <form method="get" class="search-form" style="margin: 1.5rem 0; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <input type="text" name="q" value="{{ q or '' }}" placeholder="Search listings..." 
+               style="flex: 1; min-width: 200px; padding: 0.7rem 0.9rem; border: 1px solid #d2d2d7; border-radius: 8px;">
+        
+        <select name="category" style="padding: 0.7rem 0.9rem; border: 1px solid #d2d2d7; border-radius: 8px;">
+            <option value="">All categories</option>
+            <option value="electronics" {% if category == 'electronics' %}selected{% endif %}>Electronics</option>
+            <option value="clothing" {% if category == 'clothing' %}selected{% endif %}>Clothing</option>
+            <option value="home" {% if category == 'home' %}selected{% endif %}>Home & Garden</option>
+            <option value="sports" {% if category == 'sports' %}selected{% endif %}>Sports & Outdoors</option>
+            <option value="books" {% if category == 'books' %}selected{% endif %}>Books & Media</option>
+            <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+        </select>
 
-    {% if listings %}
-    <div class="listing-grid">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+
+{% if listings %}
+    <div class="listings-grid">
         {% for listing in listings %}
-        <a href="{{ url_for('listing_detail', listing_id=listing.id) }}" class="listing-card">
-            <div class="listing-type-badge {{ listing.listing_type }}">
-                {% if listing.listing_type == 'service_for_goods' %}
-                    Service → Goods
-                {% else %}
-                    Goods → Service
-                {% endif %}
-            </div>
-            <h3>{{ listing.title }}</h3>
-            <p class="listing-meta">{{ listing.location or listing.user_location }} · by {{ listing.username }}</p>
-            <p class="listing-offer"><strong>Offers:</strong> {{ listing.what_i_offer[:90] }}{% if listing.what_i_offer|length > 90 %}…{% endif %}</p>
-            <p class="listing-want"><strong>Wants:</strong> {{ listing.what_i_want[:90] }}{% if listing.what_i_want|length > 90 %}…{% endif %}</p>
-        </a>
+            <article class="listing-card">
+                <a href="{{ url_for('listing', listing_id=listing.id) }}">
+                    {% if listing.image %}
+                        <img src="{{ url_for('static', filename='uploads/' + listing.image) }}" alt="{{ listing.title }}">
+                    {% else %}
+                        <div style="height: 180px; background: #e8e8ed; display: flex; align-items: center; justify-content: center; color: #86868b;">
+                            No image
+                        </div>
+                    {% endif %}
+                </a>
+                <div class="card-body">
+                    <h3>
+                        <a href="{{ url_for('listing', listing_id=listing.id) }}">{{ listing.title }}</a>
+                    </h3>
+                    <p class="category">{{ listing.category }}</p>
+                    <p class="looking-for">Looking for: {{ listing.looking_for or 'Open to offers' }}</p>
+                    <p style="font-size: 0.85rem; color: #86868b; margin-top: 0.4rem;">
+                        by {{ listing.username }}
+                    </p>
+                </div>
+            </article>
         {% endfor %}
     </div>
-    {% else %}
-    <p class="empty">No listings match your filters. Try different search terms or <a href="{{ url_for('post_listing') }}">post your own</a>.</p>
-    {% endif %}
-</div>
+{% else %}
+    <p class="empty">No listings match your filters.</p>
+{% endif %}
 {% endblock %}
